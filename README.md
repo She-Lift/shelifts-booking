@@ -1,4 +1,4 @@
-# SHE LIFTS Booking
+# SHE LIFTS - Booking
 
 Ett webbaserat, mobile-first bokningssystem för SHE LIFTS. Systemet gör det möjligt för kunder att boka träningspass med hjälp av klippkort och för administratören att hantera kunder, träningspass och bokningar.
 
