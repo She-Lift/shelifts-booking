@@ -1,0 +1,11 @@
+{
+  "rules": [
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "roles": [
+        "public"
+      ]
+    }
+  ]
+}

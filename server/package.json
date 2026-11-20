@@ -1,0 +1,20 @@
+{
+  "name": "shelifts-booking-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --env-file=.env --watch src/server.js",
+    "start": "node --env-file=.env src/server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "connect-pg-simple": "^10.0.0",
+    "express": "^5.3.0",
+    "express-session": "^1.19.0",
+    "path-to-regexp": "^9.0.0",
+    "pg": "^8.23.1"
+  }
+}
