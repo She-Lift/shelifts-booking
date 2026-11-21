@@ -1,5 +1,5 @@
 import pool from "../db/pool.js";
-import { hashPassword } from "../utils/password.js";
+import { hashPassword, verifyPassword } from "../utils/password.js";
 
 export default function users(server, path) {
   path += "/users";
@@ -40,4 +40,160 @@ export default function users(server, path) {
       });
     }
   });
+
+
+  server.patch(`${path}/me/password`, async (request, response, next) => {
+    try {
+      const { currentPassword, newPassword } = request.body ?? {};
+
+      if (
+        typeof currentPassword !== "string" ||
+        typeof newPassword !== "string" ||
+        currentPassword.length === 0 ||
+        Buffer.byteLength(currentPassword, "utf8") > 128 ||
+        newPassword.length < 10 ||
+        Buffer.byteLength(newPassword, "utf8") > 128
+      ) {
+        return response.status(400).json({
+          message: "Invalid password data."
+        });
+      }
+
+      if (currentPassword === newPassword) {
+        return response.status(400).json({
+          message: "New password must be different from current password."
+        });
+      }
+
+      const result = await pool.query(
+        `SELECT password_hash
+        FROM users
+        WHERE id = $1 AND is_active = true`,
+        [request.user.id]
+      );
+
+      const user = result.rows[0];
+
+      if (!user) {
+        return response.status(401).json({
+          message: "Authentication required."
+        });
+      }
+
+      const validPassword = await verifyPassword(
+        currentPassword,
+        user.password_hash
+      );
+
+      if (!validPassword) {
+        return response.status(403).json({
+          message: "Current password is incorrect."
+        });
+      }
+
+      const passwordHash = await hashPassword(newPassword);
+
+      const updateResult = await pool.query(
+        `UPDATE users
+        SET password_hash = $1,
+        must_change_password = false
+        WHERE id = $2
+        AND password_hash = $3
+        AND is_active = true`,
+        [passwordHash, request.user.id, user.password_hash]
+      );
+
+      if (updateResult.rowCount === 0) {
+        return response.status(409).json({
+          message: "Account has changed. Please try again."
+        });
+      }
+
+      return response.status(204).end();
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
+
+
+  server.patch(`${path}/:id/password`, async (request, response, next) => {
+    try {
+      const { id } = request.params;
+      const { newPassword } = request.body ?? {};
+
+      if (
+        !/^[1-9]\d*$/.test(id) ||
+        !Number.isSafeInteger(Number(id))
+      ) {
+        return response.status(400).json({
+          message: "Invalid user ID."
+        });
+      }
+
+      if (
+        typeof newPassword !== "string" ||
+        newPassword.length < 10 ||
+        Buffer.byteLength(newPassword, "utf8") > 128
+      ) {
+        return response.status(400).json({
+          message: "Invalid password."
+        });
+      }
+
+      if (Number(id) === Number(request.user.id)) {
+        return response.status(403).json({
+          message: "You cannot reset your own password."
+        });
+      }
+
+      const passwordHash = await hashPassword(newPassword);
+
+      const client = await pool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        const result = await client.query(
+          `UPDATE users
+          SET password_hash = $1,
+          must_change_password = true
+          WHERE id = $2
+          AND role = 'customer'`,
+          [passwordHash, id]
+        );
+
+        if (result.rowCount === 0) {
+          await client.query("ROLLBACK");
+
+          return response.status(404).json({
+            message: "Customer not found."
+          });
+        }
+
+        await client.query(
+          `DELETE FROM user_sessions
+          WHERE sess ->> 'userId' = $1`,
+          [id]
+        );
+
+        await client.query("COMMIT");
+
+        return response.status(204).end();
+
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
+
+
 }

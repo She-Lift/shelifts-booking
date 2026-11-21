@@ -36,6 +36,21 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/users/me/password",
+      "roles": [
+        "admin",
+        "customer"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/users/:id/password",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }
