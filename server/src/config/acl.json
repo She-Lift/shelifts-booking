@@ -6,6 +6,14 @@
       "roles": [
         "public"
       ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/users",
+      "roles": [
+        "admin",
+        "public"
+      ]
     }
   ]
 }
