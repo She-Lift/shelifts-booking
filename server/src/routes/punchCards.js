@@ -331,6 +331,21 @@ export default function punchCards(server, path) {
   // User Punch Cards
   // ========================================
 
+  server.get(path, async (request, response, next) => {
+    try {
+      const result = await pool.query(
+        `SELECT *
+        FROM vw_user_punch_cards
+        ORDER BY created_at DESC, id DESC`
+      );
+
+      return response.status(200).json(result.rows);
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
   server.post(path, async (request, response, next) => {
     try {
       const {

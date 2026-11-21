@@ -123,6 +123,13 @@
       ]
     },
     {
+      "method": "GET",
+      "path": "/api/punch-cards",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
       "method": "POST",
       "path": "/api/punch-cards",
       "roles": [
