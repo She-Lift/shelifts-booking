@@ -4,6 +4,27 @@ import { hashPassword, verifyPassword } from "../utils/password.js";
 export default function users(server, path) {
   path += "/users";
 
+  server.get(path, async (request, response, next) => {
+    try {
+      const result = await pool.query(
+        `SELECT id,
+          username,
+          role,
+          is_active,
+          must_change_password,
+          created_at
+        FROM users
+        WHERE role = 'customer'
+        ORDER BY username ASC`
+      );
+
+      return response.status(200).json(result.rows);
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
   server.post(path, async (request, response) => {
     try {
       const { username, password } = request.body;
