@@ -1,0 +1,39 @@
+{
+  "folders": [
+    {
+      "name": "Frontend",
+      "path": "client",
+    },
+    {
+      "name": "Backend",
+      "path": "server",
+    },
+    {
+      "name": "Root",
+      "path": "./",
+    },
+  ],
+  "settings": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit",
+    },
+    "files.exclude": {
+      "client": true,
+      "server": true,
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+    },
+    "js/ts.preferences.autoImportFileExcludePatterns": [
+      "node_modules/@types/node/test.d.ts",
+    ],
+    "js/ts.preferences.importModuleSpecifier": "non-relative",
+  },
+  "extensions": {
+    "recommendations": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"],
+  },
+}

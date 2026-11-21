@@ -1,8 +1,8 @@
-import { createBrowserRouter } from "react-router";
-import App from "./App";
+import { createBrowserRouter } from 'react-router';
+import App from './App';
 
-import Home from "./pages/Home";
-import NotFound from "./pages/NotFound";
+import Home from './pages/Home';
+import NotFound from './pages/NotFound';
 
 export const router = createBrowserRouter([
   {
@@ -13,7 +13,7 @@ export const router = createBrowserRouter([
         Component: Home,
       },
       {
-        path: "*",
+        path: '*',
         Component: NotFound,
       },
     ],
