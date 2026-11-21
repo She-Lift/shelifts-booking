@@ -149,6 +149,13 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/workouts",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }
