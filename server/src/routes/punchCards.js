@@ -293,6 +293,39 @@ export default function punchCards(server, path) {
     }
   });
 
+  server.patch(`${path}/types/:id/activate`, async (request, response, next) => {
+    try {
+      const { id } = request.params;
+
+      if (
+        !/^[1-9]\d*$/.test(id) ||
+        id.length > 19 ||
+        BigInt(id) > 9223372036854775807n
+      ) {
+        return response.status(400).json({
+          message: "Invalid punch card type ID."
+        });
+      }
+
+      const result = await pool.query(
+        `UPDATE punch_card_types
+        SET is_active = true
+        WHERE id = $1`,
+        [id]
+      );
+
+      if (result.rowCount === 0) {
+        return response.status(404).json({
+          message: "Punch card type not found."
+        });
+      }
+
+      return response.status(204).end();
+
+    } catch (error) {
+      next(error);
+    }
+  });
 
   // ========================================
   // User Punch Cards
