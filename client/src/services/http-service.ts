@@ -1,5 +1,22 @@
 import wretch from 'wretch';
 import QueryStringAddon from 'wretch/addons/queryString';
+import { dedupe } from 'wretch/middlewares';
+
+export const HttpStatus = {
+  Ok: 200,
+  Created: 201,
+  Accepted: 202,
+  NoContent: 204,
+  BadRequest: 400,
+  Unauthorized: 401,
+  Forbidden: 403,
+  NotFound: 404,
+  Conflict: 409,
+  Locked: 423,
+  InternalServerError: 500,
+} as const;
+
+export type HttpStatusCode = (typeof HttpStatus)[keyof typeof HttpStatus];
 
 export type QueryParams = Record<string, string | number | boolean | undefined>;
 
@@ -23,13 +40,7 @@ type DeleteRequestOptions = {
 type AnyRequestOptions = RequestOptions | PostRequestOptions | PatchRequestOptions | DeleteRequestOptions;
 
 class HttpServiceImpl {
-  public request = wretch('/api', { credentials: 'same-origin' })
-    .addon(QueryStringAddon)
-    .catcherFallback((err) => {
-      // We need to add custom http errors and throw them here. I'll add an error handler to the react createRoot, for now its jsut a console.error.
-      console.error('Unhandled API error:', err);
-      throw err;
-    });
+  public request = wretch('/api', { credentials: 'same-origin' }).addon(QueryStringAddon).middlewares([dedupe()]);
 
   #buildRequest(options: AnyRequestOptions) {
     let req = this.request.url(options.url);
