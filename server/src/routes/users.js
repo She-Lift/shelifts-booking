@@ -7,18 +7,18 @@ export default function users(server, path) {
   server.post(path, async (request, response) => {
     try {
       const { username, password } = request.body;
+      const normalizedUsername = username.trim();
 
       if (
         typeof username !== "string" ||
         typeof password !== "string" ||
-        username.length < 3 ||
+        normalizedUsername.length < 3 ||
         password.length < 10) {
         return response.status(400).json({
           message: "Invalid username or password."
         });
       }
 
-      const normalizedUsername = username.trim();
       const passwordHash = await hashPassword(password);
 
       await pool.query(
