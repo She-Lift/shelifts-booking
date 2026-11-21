@@ -135,6 +135,20 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/punch-cards/me",
+      "roles": [
+        "customer"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/punch-cards/:id",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }
