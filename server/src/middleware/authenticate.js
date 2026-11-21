@@ -1,3 +1,6 @@
+
+import pool from "../db/pool.js";
+
 export default async function authenticate(request, response, next) {
   try {
     const userId = request.session?.userId;
@@ -8,14 +11,29 @@ export default async function authenticate(request, response, next) {
       });
     }
 
-    // Later:
-    // Fetch user from PostgreSQL using userId.
-    // Verify that the account is active.
-    // Attach the verified user to request.user.
+    const result = await pool.query(
+      `SELECT id, username, role, is_active, must_change_password
+       FROM users
+       WHERE id = $1`,
+      [userId]
+    );
 
-    return response.status(503).json({
-      message: "Authentication is not configured yet."
-    });
+    const user = result.rows[0];
+
+    if (!user || !user.is_active) {
+      return response.status(401).json({
+        message: "Authentication required."
+      });
+    }
+
+    request.user = {
+      id: user.id,
+      username: user.username,
+      role: user.role,
+      mustChangePassword: user.must_change_password
+    };
+
+    next();
   } catch (error) {
     next(error);
   }

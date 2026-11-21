@@ -4,9 +4,13 @@ import { RouterProvider } from 'react-router';
 import { router } from './router';
 
 import './index.scss';
+import { GlobalProvider } from './context/GlobalProvider';
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <GlobalProvider>
+      <RouterProvider router={router} />
+    </GlobalProvider>
   </StrictMode>,
 );
