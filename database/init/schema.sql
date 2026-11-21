@@ -219,3 +219,25 @@ INNER JOIN users u
     ON upc.user_id = u.id
 INNER JOIN punch_card_types pct
     ON upc.punch_card_type_id = pct.id;
+
+CREATE OR REPLACE VIEW vw_workouts AS
+SELECT
+    ws.id,
+    ws.schedule_id,
+    ws.title,
+    ws.description,
+    ws.starts_at,
+    ws.ends_at,
+    ws.capacity,
+    ws.status,
+    ws.created_at,
+    ws.updated_at,
+    COUNT(b.id)::integer AS booked_slots,
+    (
+        ws.capacity - COUNT(b.id)
+    )::integer AS available_slots
+FROM workout_sessions ws
+LEFT JOIN bookings b
+    ON ws.id = b.workout_session_id
+    AND b.status IN ('booked', 'completed')
+GROUP BY ws.id;
