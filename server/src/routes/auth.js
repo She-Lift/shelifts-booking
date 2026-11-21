@@ -5,6 +5,12 @@ import { verifyPassword } from "../utils/password.js";
 export default function auth(server, path) {
   path += "/auth";
 
+  server.get(path, (request, response) => {
+    return response.status(200).json({
+      user: request.user
+    });
+  });
+
   server.post(`${path}`, async (request, response, next) => {
     try {
       const { username, password } = request.body;
@@ -30,7 +36,6 @@ export default function auth(server, path) {
       );
 
       const user = result.rows[0];
-      console.log(user);
 
       if (!user || !user.is_active) {
         return response.status(401).json({
