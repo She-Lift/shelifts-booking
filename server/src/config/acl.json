@@ -79,6 +79,55 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/punch-cards/types",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/punch-cards/types/:id",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/punch-cards/types",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/punch-cards/types/:id",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/punch-cards/types/:id/deactivate",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/punch-cards/types/:id/activate",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/punch-cards",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }
