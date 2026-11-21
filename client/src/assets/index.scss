@@ -9,6 +9,15 @@ body,
   min-height: 100vh;
 }
 
+.is-fullheight {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.is-fullwidth {
+  width: 100%;
+}
+
 [data-theme='dark'] .box,
 [data-theme='dark'] .card {
   background-color: var(--bulma-scheme-main-bis);
