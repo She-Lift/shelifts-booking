@@ -86,6 +86,13 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/punch-cards/types",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }

@@ -79,6 +79,26 @@ export default function punchCards(server, path) {
     }
   });
 
+  server.get(`${path}/types`, async (request, response, next) => {
+    try {
+      const result = await pool.query(
+        `SELECT id,
+          name,
+          total_credits,
+          validity_months,
+          max_sessions_per_week,
+          is_active
+        FROM punch_card_types
+        ORDER BY name ASC`
+      );
+
+      return response.status(200).json(result.rows);
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
   // ========================================
   // User Punch Cards
   // ========================================
