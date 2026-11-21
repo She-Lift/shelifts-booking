@@ -52,45 +52,43 @@ export default function Login() {
   }
 
   return (
-    <section className="section">
-      <div className="container" style={{ maxWidth: '420px' }}>
-        <>
-          <h1 className="title">SHE LIFTS</h1>
-          <p className="subtitle">Logga in på ditt konto</p>
+    <section className="section is-fullheight is-flex is-flex-direction-column is-justify-content-center is-align-items-center">
+      <div className="is-fullwidth" style={{ maxWidth: '420px' }}>
+        <h1 className="title has-text-centered">SHE LIFTS</h1>
+        <p className="subtitle has-text-centered">Logga in på ditt konto</p>
 
-          <form action={formAction}>
-            <div className="field">
-              <label className="label" htmlFor="username">
-                Användarnamn
-              </label>
-              <input id="username" name="username" className="input" autoComplete="username" required />
-            </div>
+        <form action={formAction}>
+          <div className="field">
+            <label className="label" htmlFor="username">
+              Användarnamn
+            </label>
+            <input id="username" name="username" className="input" autoComplete="username" required />
+          </div>
 
-            <div className="field">
-              <label className="label" htmlFor="password">
-                Lösenord
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                className="input"
-                autoComplete="current-password"
-                required
-              />
-            </div>
+          <div className="field">
+            <label className="label" htmlFor="password">
+              Lösenord
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              className="input"
+              autoComplete="current-password"
+              required
+            />
+          </div>
 
-            {state.error && (
-              <p className="help is-danger" role="alert">
-                {state.error}
-              </p>
-            )}
+          {state.error && (
+            <p className="help is-danger" role="alert">
+              {state.error}
+            </p>
+          )}
 
-            <Button type="submit" className="is-primary is-fullwidth mt-5" isLoading={isPending}>
-              Logga in
-            </Button>
-          </form>
-        </>
+          <Button type="submit" className="is-primary is-fullwidth mt-5" isLoading={isPending}>
+            Logga in
+          </Button>
+        </form>
       </div>
     </section>
   );
