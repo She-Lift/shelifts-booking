@@ -199,3 +199,23 @@ ON workout_sessions (starts_at);
 -- Find credit history
 CREATE INDEX idx_credit_transactions_card
 ON credit_transactions (user_punch_card_id);
+
+CREATE OR REPLACE VIEW vw_user_punch_cards AS
+SELECT
+    upc.id,
+    upc.user_id,
+    u.username,
+    upc.punch_card_type_id,
+    pct.name AS punch_card_type_name,
+    upc.total_credits,
+    upc.remaining_credits,
+    upc.max_sessions_per_week,
+    upc.valid_from::text AS valid_from,
+    upc.valid_until::text AS valid_until,
+    upc.status,
+    upc.created_at
+FROM user_punch_cards upc
+INNER JOIN users u
+    ON upc.user_id = u.id
+INNER JOIN punch_card_types pct
+    ON upc.punch_card_type_id = pct.id;
