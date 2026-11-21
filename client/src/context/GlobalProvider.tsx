@@ -1,52 +1,37 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { GlobalContext, type User } from "./GlobalContext";
+import { AuthService, type User } from '@src/services/auth-service';
+import { HttpError } from '@src/services/http-service';
+import { useEffect, useState, type ReactNode } from 'react';
+import { GlobalContext } from './GlobalContext';
 
-export function GlobalProvider({ children }: { children: ReactNode; }) {
-  const [user, setUser] = useState<User | null>(null);
+export function GlobalProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User>();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const controller = new AbortController();
+    const handleUnauthorized = () => setUser(undefined);
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+  }, []);
 
+  useEffect(() => {
     async function checkSession() {
       try {
-        const response = await fetch("/api/auth", {
-          method: "GET",
-          credentials: "same-origin",
-          signal: controller.signal
-        });
-
-        if (response.status === 401) {
-          setUser(null);
+        const sessionUser = await AuthService.getSession();
+        setUser(sessionUser);
+      } catch (error) {
+        setUser(undefined);
+        if (error instanceof HttpError && error.status === 401) {
+          setUser(undefined);
           return;
         }
-
-        if (!response.ok) {
-          throw new Error("Could not verify session.");
-        }
-
-        const data = await response.json();
-        setUser(data.user);
-      } catch (error) {
-        if (!controller.signal.aborted) {
-          console.error("Session check failed:", error);
-          setUser(null);
-        }
+        throw error;
       } finally {
-        if (!controller.signal.aborted) {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     }
 
     checkSession();
-
-    return () => controller.abort();
   }, []);
 
-  return <>
-    <GlobalContext.Provider value={{ user, setUser, isLoading }}>
-      {children}
-    </GlobalContext.Provider>
-  </>;
+  return <GlobalContext value={{ user, setUser, isLoading }}>{children}</GlobalContext>;
 }
