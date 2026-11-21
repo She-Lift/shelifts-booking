@@ -331,6 +331,169 @@ export default function punchCards(server, path) {
   // User Punch Cards
   // ========================================
 
+  server.post(path, async (request, response, next) => {
+    try {
+      const {
+        userId,
+        punchCardTypeId,
+        validFrom
+      } = request.body;
 
+      if (
+        typeof userId !== "string" ||
+        !/^[1-9]\d*$/.test(userId) ||
+        userId.length > 19 ||
+        BigInt(userId) > 9223372036854775807n
+      ) {
+        return response.status(400).json({
+          message: "Invalid user ID."
+        });
+      }
+
+      if (
+        typeof punchCardTypeId !== "string" ||
+        !/^[1-9]\d*$/.test(punchCardTypeId) ||
+        punchCardTypeId.length > 19 ||
+        BigInt(punchCardTypeId) > 9223372036854775807n
+      ) {
+        return response.status(400).json({
+          message: "Invalid punch card type ID."
+        });
+      }
+
+      if (
+        typeof validFrom !== "string" ||
+        !/^\d{4}-\d{2}-\d{2}$/.test(validFrom)
+      ) {
+        return response.status(400).json({
+          message: "Invalid start date."
+        });
+      }
+
+      const client = await pool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        // Verify customer
+        const userResult = await client.query(
+          `SELECT id
+          FROM users
+          WHERE id = $1
+            AND role = 'customer'
+            AND is_active = true
+          FOR SHARE`,
+          [userId]
+        );
+
+        if (userResult.rowCount === 0) {
+          await client.query("ROLLBACK");
+
+          return response.status(404).json({
+            message: "Active customer not found."
+          });
+        }
+
+        // Fetch punch card type
+        const typeResult = await client.query(
+          `SELECT id,
+            total_credits,
+            validity_months,
+            max_sessions_per_week
+          FROM punch_card_types
+          WHERE id = $1
+            AND is_active = true
+          FOR SHARE`,
+          [punchCardTypeId]
+        );
+
+        if (typeResult.rowCount === 0) {
+          await client.query("ROLLBACK");
+
+          return response.status(404).json({
+            message: "Active punch card type not found."
+          });
+        }
+
+        const cardType = typeResult.rows[0];
+
+        // Assign punch card to customer
+        const cardResult = await client.query(
+          `INSERT INTO user_punch_cards (
+            user_id,
+            punch_card_type_id,
+            total_credits,
+            remaining_credits,
+            max_sessions_per_week,
+            valid_from,
+            valid_until
+          )
+          VALUES (
+            $1,
+            $2,
+            $3,
+            $3,
+            $4,
+            $5::date,
+            ($5::date + make_interval(months => $6::integer))::date
+          )
+          RETURNING id`,
+          [
+            userId,
+            punchCardTypeId,
+            cardType.total_credits,
+            cardType.max_sessions_per_week,
+            validFrom,
+            cardType.validity_months
+          ]
+        );
+
+        const punchCardId = cardResult.rows[0].id;
+
+        // Register initial credit transaction
+        await client.query(
+          `INSERT INTO credit_transactions (
+            user_punch_card_id,
+            amount,
+            reason,
+            performed_by
+          )
+          VALUES ($1, $2, 'card_issued', $3)`,
+          [
+            punchCardId,
+            cardType.total_credits,
+            request.user.id
+          ]
+        );
+
+        await client.query("COMMIT");
+
+        return response.status(201).json({
+          message: "Punch card assigned successfully.",
+          punchCardId
+        });
+
+      } catch (error) {
+        await client.query("ROLLBACK");
+
+        if (
+          error.code === "22007" ||
+          error.code === "22008"
+        ) {
+          return response.status(400).json({
+            message: "Invalid start date or validity period."
+          });
+        }
+
+        throw error;
+
+      } finally {
+        client.release();
+      }
+
+    } catch (error) {
+      next(error);
+    }
+  });
 
 }

@@ -103,7 +103,7 @@ export default function users(server, path) {
 
   server.patch(`${path}/me/password`, async (request, response, next) => {
     try {
-      const { currentPassword, newPassword } = request.body ?? {};
+      const { currentPassword, newPassword } = request.body;
 
       if (
         typeof currentPassword !== "string" ||
@@ -178,7 +178,7 @@ export default function users(server, path) {
   server.patch(`${path}/:id/password`, async (request, response, next) => {
     try {
       const { id } = request.params;
-      const { newPassword } = request.body ?? {};
+      const { newPassword } = request.body;
 
       if (
         !/^[1-9]\d*$/.test(id) ||
