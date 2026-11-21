@@ -23,6 +23,14 @@
       ]
     },
     {
+      "method": "DELETE",
+      "path": "/api/auth",
+      "roles": [
+        "admin",
+        "customer"
+      ]
+    },
+    {
       "method": "POST",
       "path": "/api/users",
       "roles": [

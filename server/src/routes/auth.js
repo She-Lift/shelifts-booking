@@ -83,4 +83,16 @@ export default function auth(server, path) {
       next(error);
     }
   });
+
+  server.delete(path, (request, response, next) => {
+    request.session.destroy((error) => {
+      if (error) {
+        return next(error);
+      }
+
+      response.clearCookie("connect.sid");
+
+      return response.status(204).end();
+    });
+  });
 }
