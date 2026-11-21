@@ -65,6 +65,20 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/users/:id/deactivate",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/users/:id/activate",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }

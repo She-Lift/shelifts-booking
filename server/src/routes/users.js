@@ -251,4 +251,94 @@ export default function users(server, path) {
     }
   });
 
+  server.patch(`${path}/:id/deactivate`, async (request, response, next) => {
+    try {
+      const { id } = request.params;
+
+      if (
+        !/^[1-9]\d*$/.test(id) ||
+        !Number.isSafeInteger(Number(id))
+      ) {
+        return response.status(400).json({
+          message: "Invalid user ID."
+        });
+      }
+
+      const client = await pool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        const result = await client.query(
+          `UPDATE users
+          SET is_active = false
+          WHERE id = $1
+          AND role = 'customer'`,
+          [id]
+        );
+
+        if (result.rowCount === 0) {
+          await client.query("ROLLBACK");
+
+          return response.status(404).json({
+            message: "Customer not found."
+          });
+        }
+
+        await client.query(
+          `DELETE FROM user_sessions
+          WHERE sess ->> 'userId' = $1`,
+          [id]
+        );
+
+        await client.query("COMMIT");
+
+        return response.status(204).end();
+
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+      } finally {
+        client.release();
+      }
+
+    } catch (error) {
+      next(error);
+    }
+  });
+  
+  server.patch(`${path}/:id/activate`, async (request, response, next) => {
+    try {
+      const { id } = request.params;
+
+      if (
+        !/^[1-9]\d*$/.test(id) ||
+        !Number.isSafeInteger(Number(id))
+      ) {
+        return response.status(400).json({
+          message: "Invalid user ID."
+        });
+      }
+
+      const result = await pool.query(
+        `UPDATE users
+        SET is_active = true
+        WHERE id = $1
+        AND role = 'customer'`,
+        [id]
+      );
+
+      if (result.rowCount === 0) {
+        return response.status(404).json({
+          message: "Customer not found."
+        });
+      }
+
+      return response.status(204).end();
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
 }
