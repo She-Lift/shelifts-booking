@@ -1,11 +1,11 @@
 -- Users
 INSERT INTO users 
     (username, password_hash, role, is_active, must_change_password, created_at) 
-VALUES ('devadmin', 'scrypt-v1$32768$8$1$ee9faef53fba60c05b789404edde550c$6579094799e98a9c1c3660076f89e2fc8e574ca9f36248ce02ee3cd01355fb8dad378efb2b8b2756ef3aaeddc30574f8a35ae9e06b2b29970f9664ac8dd630da', 'admin', true, true, '2026-11-21 12:43:15.944819 +00:00');
+VALUES 
+    ('devadmin', 'scrypt-v1$32768$8$1$5572bee21a0babeac681060a530673f7$417c0d8b9121f2723e9324fe08a7acc00ccd9c05b1b77c1c9bc4dd4768c43ece08dbcb3c168ad4aff2d7112e52023dd9cd4fca526aa7192103283d6e4cf2c74b', 'admin', true, false, '2026-11-21 13:53:40.623662 +00:00');
 
 
 -- Punch card types
-
 INSERT INTO punch_card_types
     (name, total_credits, validity_months, max_sessions_per_week)
 VALUES
@@ -14,7 +14,6 @@ VALUES
 
 
 -- Recurring workout schedules
-
 INSERT INTO workout_schedules
     (title, weekday, start_time, duration_minutes, capacity)
 VALUES
