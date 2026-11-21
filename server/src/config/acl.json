@@ -38,6 +38,13 @@
       ]
     },
     {
+      "method": "GET",
+      "path": "/api/users/:id",
+      "roles": [
+        "admin"
+      ]
+    },
+    {
       "method": "POST",
       "path": "/api/users",
       "roles": [
