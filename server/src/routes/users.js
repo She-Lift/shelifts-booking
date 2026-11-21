@@ -25,6 +25,45 @@ export default function users(server, path) {
     }
   });
 
+  server.get(`${path}/:id`, async (request, response, next) => {
+    try {
+      const { id } = request.params;
+
+      if (
+        !/^[1-9]\d*$/.test(id) ||
+        !Number.isSafeInteger(Number(id))
+      ) {
+        return response.status(400).json({
+          message: "Invalid user ID."
+        });
+      }
+
+      const result = await pool.query(
+        `SELECT id,
+          username,
+          role,
+          is_active,
+          must_change_password,
+          created_at
+        FROM users
+        WHERE id = $1
+        AND role = 'customer'`,
+        [id]
+      );
+
+      if (result.rowCount === 0) {
+        return response.status(404).json({
+          message: "Customer not found."
+        });
+      }
+
+      return response.status(200).json(result.rows[0]);
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
   server.post(path, async (request, response) => {
     try {
       const { username, password } = request.body;
@@ -61,7 +100,6 @@ export default function users(server, path) {
       });
     }
   });
-
 
   server.patch(`${path}/me/password`, async (request, response, next) => {
     try {
@@ -136,8 +174,6 @@ export default function users(server, path) {
       next(error);
     }
   });
-
-
 
   server.patch(`${path}/:id/password`, async (request, response, next) => {
     try {
@@ -214,7 +250,5 @@ export default function users(server, path) {
       next(error);
     }
   });
-
-
 
 }
