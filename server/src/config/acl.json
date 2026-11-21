@@ -79,6 +79,13 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/punch-cards/types",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }
