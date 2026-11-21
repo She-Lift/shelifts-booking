@@ -9,6 +9,9 @@ export default defineConfig({
     outDir: fileURLToPath(new URL('../server/public', import.meta.url)),
     emptyOutDir: true,
   },
+  resolve: {
+    tsconfigPaths: true,
+  },
   css: {
     preprocessorOptions: {
       scss: {
