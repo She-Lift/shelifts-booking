@@ -13,7 +13,7 @@ const SCRYPT_CONFIG = {
 };
 
 export async function hashPassword(password) {
-  const salt = randomBytes(16).toString("hex");
+  const salt = randomBytes(SALT_LENGTH);
 
   const derivedKey = await scryptAsync(password, salt, KEY_LENGTH, SCRYPT_CONFIG);
 
