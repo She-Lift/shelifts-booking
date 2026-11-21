@@ -8,6 +8,26 @@ export default function punchCards(server, path) {
   // Punch Card Types
   // ========================================
 
+  server.get(`${path}/types`, async (request, response, next) => {
+    try {
+      const result = await pool.query(
+        `SELECT id,
+          name,
+          total_credits,
+          validity_months,
+          max_sessions_per_week,
+          is_active
+        FROM punch_card_types
+        ORDER BY name ASC`
+      );
+
+      return response.status(200).json(result.rows);
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
   server.post(`${path}/types`, async (request, response, next) => {
     try {
       const {
@@ -79,28 +99,47 @@ export default function punchCards(server, path) {
     }
   });
 
-  server.get(`${path}/types`, async (request, response, next) => {
+  // ========================================
+  // User Punch Cards
+  // ========================================
+
+  server.get(`${path}/types/:id`, async (request, response, next) => {
     try {
+      const { id } = request.params;
+
+      if (
+        !/^[1-9]\d*$/.test(id) ||
+        id.length > 19 ||
+        BigInt(id) > 9223372036854775807n
+      ) {
+        return response.status(400).json({
+          message: "Invalid punch card type ID."
+        });
+      }
+
       const result = await pool.query(
         `SELECT id,
-          name,
-          total_credits,
-          validity_months,
-          max_sessions_per_week,
-          is_active
-        FROM punch_card_types
-        ORDER BY name ASC`
+        name,
+        total_credits,
+        validity_months,
+        max_sessions_per_week,
+        is_active
+      FROM punch_card_types
+      WHERE id = $1`,
+        [id]
       );
 
-      return response.status(200).json(result.rows);
+      if (result.rowCount === 0) {
+        return response.status(404).json({
+          message: "Punch card type not found."
+        });
+      }
+
+      return response.status(200).json(result.rows[0]);
 
     } catch (error) {
       next(error);
     }
   });
-
-  // ========================================
-  // User Punch Cards
-  // ========================================
 
 }

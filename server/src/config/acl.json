@@ -93,6 +93,13 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/punch-cards/types/:id",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }
