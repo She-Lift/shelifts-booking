@@ -179,6 +179,13 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/workouts/:id/cancel",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }

@@ -426,4 +426,151 @@ export default function workouts(server, path) {
     }
   });
 
+  server.patch(`${path}/:id/cancel`, async (request, response, next) => {
+    try {
+      const { id } = request.params;
+
+      if (
+        !/^[1-9]\d*$/.test(id) ||
+        id.length > 19 ||
+        BigInt(id) > 9223372036854775807n
+      ) {
+        return response.status(400).json({
+          message: "Invalid workout ID."
+        });
+      }
+
+      const client = await pool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        // Fetch and lock workout
+        const workoutResult = await client.query(
+          `SELECT id,
+            starts_at,
+            status
+          FROM workout_sessions
+          WHERE id = $1
+          FOR UPDATE`,
+          [id]
+        );
+
+        if (workoutResult.rowCount === 0) {
+          await client.query("ROLLBACK");
+
+          return response.status(404).json({
+            message: "Workout not found."
+          });
+        }
+
+        const workout = workoutResult.rows[0];
+
+        // Workout is already cancelled
+        if (workout.status === "cancelled") {
+          await client.query("COMMIT");
+
+          return response.status(204).end();
+        }
+
+        // Verify workout status
+        if (workout.status !== "scheduled") {
+          await client.query("ROLLBACK");
+
+          return response.status(409).json({
+            message: "Only scheduled workouts can be cancelled."
+          });
+        }
+
+        // Prevent cancellation of workouts that have started
+        if (new Date(workout.starts_at).getTime() <= Date.now()) {
+          await client.query("ROLLBACK");
+
+          return response.status(409).json({
+            message: "Workouts that have started cannot be cancelled."
+          });
+        }
+
+        // Fetch and lock existing bookings
+        const bookingResult = await client.query(
+          `SELECT id,
+            user_punch_card_id
+          FROM bookings
+          WHERE workout_session_id = $1
+            AND status = 'booked'
+          ORDER BY user_punch_card_id ASC, id ASC
+          FOR UPDATE`,
+          [id]
+        );
+
+        // Cancel workout
+        await client.query(
+          `UPDATE workout_sessions
+          SET status = 'cancelled',
+              updated_at = NOW()
+          WHERE id = $1`,
+          [id]
+        );
+
+        // Cancel bookings and refund credits
+        for (const booking of bookingResult.rows) {
+
+          // Cancel customer booking
+          await client.query(
+            `UPDATE bookings
+            SET status = 'cancelled_by_admin',
+                cancelled_at = NOW()
+            WHERE id = $1`,
+            [booking.id]
+          );
+
+          // Refund one credit
+          const refundResult = await client.query(
+            `UPDATE user_punch_cards
+            SET remaining_credits = remaining_credits + 1
+            WHERE id = $1
+              AND remaining_credits < total_credits`,
+            [booking.user_punch_card_id]
+          );
+
+          if (refundResult.rowCount !== 1) {
+            throw new Error("Unable to refund booking credit.");
+          }
+
+          // Register credit transaction
+          await client.query(
+            `INSERT INTO credit_transactions (
+              user_punch_card_id,
+              booking_id,
+              amount,
+              reason,
+              performed_by
+            )
+            VALUES ($1, $2, 1, 'cancellation', $3)`,
+            [
+              booking.user_punch_card_id,
+              booking.id,
+              request.user.id
+            ]
+          );
+        }
+
+        await client.query("COMMIT");
+
+        return response.status(204).end();
+
+      } catch (error) {
+        await client.query("ROLLBACK");
+
+        throw error;
+
+      } finally {
+        client.release();
+      }
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
 }
