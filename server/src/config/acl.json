@@ -172,6 +172,13 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/workouts/:id",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }
