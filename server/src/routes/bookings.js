@@ -337,4 +337,175 @@ export default function bookings(server, path) {
     }
   });
 
+  server.patch(`${path}/:id/cancel`, async (request, response, next) => {
+    try {
+      const { id } = request.params;
+
+      if (
+        !/^[1-9]\d*$/.test(id) ||
+        id.length > 19 ||
+        BigInt(id) > 9223372036854775807n
+      ) {
+        return response.status(400).json({
+          message: "Invalid booking ID."
+        });
+      }
+
+      // Find the booking and verify ownership
+      const bookingResult = await pool.query(
+        `SELECT workout_session_id
+        FROM bookings
+        WHERE id = $1
+          AND user_id = $2`,
+        [id, request.user.id]
+      );
+
+      if (bookingResult.rowCount === 0) {
+        return response.status(404).json({
+          message: "Booking not found."
+        });
+      }
+
+      const workoutId = bookingResult.rows[0].workout_session_id;
+
+      const client = await pool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        // Lock workout first
+        const workoutResult = await client.query(
+          `SELECT id, starts_at, status
+          FROM workout_sessions
+          WHERE id = $1
+          FOR UPDATE`,
+          [workoutId]
+        );
+
+        if (workoutResult.rowCount === 0) {
+          await client.query("ROLLBACK");
+
+          return response.status(404).json({
+            message: "Workout not found."
+          });
+        }
+
+        const workout = workoutResult.rows[0];
+
+        // Lock booking and recheck ownership and status
+        const lockedBookingResult = await client.query(
+          `SELECT id, status, user_punch_card_id
+          FROM bookings
+          WHERE id = $1
+            AND user_id = $2
+            AND workout_session_id = $3
+          FOR UPDATE`,
+          [id, request.user.id, workoutId]
+        );
+
+        if (lockedBookingResult.rowCount === 0) {
+          await client.query("ROLLBACK");
+
+          return response.status(404).json({
+            message: "Booking not found."
+          });
+        }
+
+        const booking = lockedBookingResult.rows[0];
+
+        // Already cancelled by the customer
+        if (booking.status === "cancelled_by_customer") {
+          await client.query("COMMIT");
+
+          return response.status(204).end();
+        }
+
+        if (booking.status !== "booked") {
+          await client.query("ROLLBACK");
+
+          return response.status(409).json({
+            message: "Booking cannot be cancelled."
+          });
+        }
+
+        if (workout.status !== "scheduled") {
+          await client.query("ROLLBACK");
+
+          return response.status(409).json({
+            message: "Workout is not available for cancellation."
+          });
+        }
+
+        // Cancellation must be at least 6 hours before start
+        const timeResult = await client.query(
+          `SELECT $1::timestamptz >=
+          clock_timestamp() + INTERVAL '6 hours'
+          AS can_cancel`,
+          [workout.starts_at]
+        );
+
+        if (!timeResult.rows[0].can_cancel) {
+          await client.query("ROLLBACK");
+
+          return response.status(409).json({
+            message: "Booking cannot be cancelled less than 6 hours before the workout."
+          });
+        }
+
+        // Cancel booking
+        await client.query(
+          `UPDATE bookings
+          SET status = 'cancelled_by_customer',
+              cancelled_at = NOW()
+          WHERE id = $1`,
+          [id]
+        );
+
+        // Return one credit to the original punch card
+        const creditResult = await client.query(
+          `UPDATE user_punch_cards
+          SET remaining_credits = remaining_credits + 1
+          WHERE id = $1
+            AND remaining_credits < total_credits`,
+          [booking.user_punch_card_id]
+        );
+
+        if (creditResult.rowCount !== 1) {
+          throw new Error("Unable to refund booking credit.");
+        }
+
+        // Register credit refund
+        await client.query(
+          `INSERT INTO credit_transactions (
+            user_punch_card_id,
+            booking_id,
+            amount,
+            reason,
+            performed_by
+          )
+          VALUES ($1, $2, 1, 'cancellation', $3)`,
+          [
+            booking.user_punch_card_id,
+            booking.id,
+            request.user.id
+          ]
+        );
+
+        await client.query("COMMIT");
+
+        return response.status(204).end();
+
+      } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+
+      } finally {
+        client.release();
+      }
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
 }

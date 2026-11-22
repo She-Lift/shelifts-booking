@@ -214,6 +214,13 @@
       "roles": [
         "customer"
       ]
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/bookings/:id/cancel",
+      "roles": [
+        "customer"
+      ]
     }
   ]
 }
