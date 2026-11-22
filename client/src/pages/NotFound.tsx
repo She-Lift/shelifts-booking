@@ -1,4 +1,4 @@
-import LinkButton from '@src/components/LinkButton';
+import LinkButton from '@src/components/generic/LinkButton';
 import { useGlobalContext } from '@src/context/GlobalContext';
 import { ROLES } from '@src/services/auth-service';
 import { Navigate } from 'react-router';
