@@ -241,3 +241,29 @@ LEFT JOIN bookings b
     ON ws.id = b.workout_session_id
     AND b.status IN ('booked', 'completed')
 GROUP BY ws.id;
+
+CREATE OR REPLACE VIEW vw_bookings AS
+SELECT
+    b.id,
+    b.user_id,
+    u.username,
+    b.workout_session_id AS workout_id,
+    ws.title AS workout_title,
+    ws.starts_at AS workout_starts_at,
+    ws.ends_at AS workout_ends_at,
+    ws.status AS workout_status,
+    b.user_punch_card_id,
+    pct.name AS punch_card_type_name,
+    b.status,
+    b.created_at,
+    b.cancelled_at
+FROM bookings b
+INNER JOIN users u
+    ON b.user_id = u.id
+INNER JOIN workout_sessions ws
+    ON b.workout_session_id = ws.id
+INNER JOIN user_punch_cards upc
+    ON b.user_punch_card_id = upc.id
+INNER JOIN punch_card_types pct
+    ON upc.punch_card_type_id = pct.id;
+

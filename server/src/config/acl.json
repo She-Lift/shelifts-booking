@@ -186,6 +186,13 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/bookings",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }
