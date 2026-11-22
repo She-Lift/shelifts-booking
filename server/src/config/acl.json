@@ -149,6 +149,29 @@
       "roles": [
         "admin"
       ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/workouts",
+      "roles": [
+        "admin",
+        "customer"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/workouts/:id",
+      "roles": [
+        "admin",
+        "customer"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/workouts",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }
