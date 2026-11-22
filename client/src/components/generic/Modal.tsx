@@ -1,4 +1,4 @@
-import { useEffect, useId, type ReactNode } from 'react';
+import { useEffect, useEffectEvent, useId, type ReactNode } from 'react';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ export interface ModalProps {
 
 export default function Modal({ isOpen, title, onClose, footer, children }: ModalProps) {
   const titleId = useId();
+  const handleClose = useEffectEvent(onClose);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -17,7 +18,7 @@ export default function Modal({ isOpen, title, onClose, footer, children }: Moda
     document.documentElement.classList.add('is-clipped');
 
     function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleClose();
     }
 
     window.addEventListener('keydown', handleKeyDown);
@@ -25,10 +26,10 @@ export default function Modal({ isOpen, title, onClose, footer, children }: Moda
       document.documentElement.classList.remove('is-clipped');
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   return (
-    <div className={`modal px-3 ${isOpen ? 'is-active' : ''}`} role="dialog">
+    <div className={`modal px-3 ${isOpen ? 'is-active' : ''}`}>
       <div className="modal-background" onClick={onClose} />
       <div className="modal-card">
         <header className="modal-card-head py-4 px-5">

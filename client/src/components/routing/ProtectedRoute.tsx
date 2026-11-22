@@ -1,22 +1,23 @@
-import { useGlobalContext } from '@src/context/GlobalContext';
-import { type User } from '@src/services/auth-service';
-import { ROLE_ROUTES } from '@src/utils/role-routes';
+import Navbar from '@src/components/routing/Navbar';
+import { useGlobalContext } from '@src/context/global-context';
 import { Navigate, Outlet } from 'react-router';
 
-interface ProtectedRouteProps {
-  allowedRole: User['role'];
-}
-
-export default function ProtectedRoute({ allowedRole }: ProtectedRouteProps) {
+export default function ProtectedRoute() {
   const { user } = useGlobalContext();
 
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  if (user.role !== allowedRole) {
-    return <Navigate to={ROLE_ROUTES[user.role]} replace />;
-  }
+  return (
+    <>
+      <header>
+        <Navbar />
+      </header>
 
-  return <Outlet />;
+      <main className="hero is-fullheight-with-navbar">
+        <Outlet />
+      </main>
+    </>
+  );
 }

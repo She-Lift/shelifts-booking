@@ -1,18 +1,85 @@
 @use 'bulma/sass' with (
   $primary: #6c0919,
+  $link: #6c0919,
+  $info: #00286e,
+  $success: #146c35,
+  $danger: #a52a2a,
   $scheme-main: #f8eee7,
+  $scheme-main-bis: #efe5df,
+  $border: #b2aba4,
   $text: #040303,
   $family-primary: '"Inter", system-ui, -apple-system, sans-serif'
 );
 
-html,
-body,
-#root {
-  min-height: 100vh;
+:root {
+  --bulma-scheme-main-bis: #efe5df;
+  --bulma-scheme-main-ter: #fffaf6;
+  --surface-border: #dfd6cf;
+
+  --bulma-input-background-color: var(--bulma-scheme-main-bis);
+  --bulma-input-border-color: var(--bulma-border);
+
+  --bulma-box-background-color: var(--bulma-scheme-main-ter);
+  --bulma-box-shadow: none;
+  --bulma-box-radius: 1rem;
+
+  --bulma-card-background-color: var(--bulma-scheme-main-ter);
+  --bulma-card-shadow: none;
+  --bulma-card-radius: 1rem;
 }
 
 html {
   scrollbar-gutter: stable;
+}
+
+.box,
+.card {
+  border: 1px solid var(--surface-border);
+}
+
+.app-navbar {
+  --bulma-navbar-background-color: var(--bulma-scheme-main-bis);
+  border-top: 1px solid var(--surface-border);
+
+  .navbar-item {
+    --bulma-navbar-item-color: #665c56;
+    background-color: transparent;
+    padding-block: 0.6rem;
+    font-weight: 500;
+
+    .nav-content {
+      gap: 0.2rem;
+      transition: transform 0.2s ease-out;
+      will-change: transform;
+    }
+
+    .icon .material-symbols-outlined {
+      font-size: 1.45em;
+    }
+
+    &:hover,
+    &:focus {
+      background-color: transparent;
+      color: var(--bulma-navbar-item-color);
+    }
+
+    &:hover .nav-content,
+    &.is-active .nav-content {
+      transform: scale(1.08);
+    }
+
+    &.is-active {
+      --bulma-navbar-item-color: var(--bulma-primary);
+      background-color: transparent;
+      color: var(--bulma-primary);
+      font-weight: 600;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--bulma-primary);
+      outline-offset: -2px;
+    }
+  }
 }
 
 .is-fullheight {
@@ -61,6 +128,26 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
+input[type='date'].input,
+input[type='time'].input {
+  position: relative;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+}
+
+input[type='date'].input::-webkit-calendar-picker-indicator,
+input[type='time'].input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
 button,
 a,
 [role='button'],
@@ -68,19 +155,6 @@ input,
 select,
 textarea {
   -webkit-tap-highlight-color: transparent;
-}
-
-[data-theme='dark'] .box,
-[data-theme='dark'] .card {
-  background-color: var(--bulma-scheme-main-bis);
-  border: 1px solid var(--bulma-border);
-}
-
-[data-theme='dark'] .input,
-[data-theme='dark'] .textarea,
-[data-theme='dark'] .select select {
-  background-color: var(--bulma-scheme-main);
-  border-color: var(--bulma-border);
 }
 
 @keyframes spinner-fade-in {
@@ -124,24 +198,4 @@ textarea {
 .table td,
 .table th {
   vertical-align: middle;
-}
-
-// SHE LIFTS brand palette (ported from the Tailwind project, no Tailwind dependency).
-:root {
-  --color-background: #f8eee7;
-  --color-primary: #6c0919;
-  --color-primary1: #00286e;
-  --color-base-text: #040303;
-  --color-form: #efe5df;
-  --color-form-border: #b2aba4;
-}
-
-html, body, #root {
-  background-color: var(--color-background);
-}
-
-// Keep Bulma controls consistent with the warm, light palette.
-html {
-  --bulma-body-background-color: var(--color-background);
-  --bulma-body-color: var(--color-base-text);
 }

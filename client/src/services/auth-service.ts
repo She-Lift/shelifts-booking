@@ -1,11 +1,6 @@
 import { api } from '@src/services/api-routes';
 import { HttpService } from '@src/services/http-service';
 
-export const ROLES: Record<User['role'], string> = {
-  admin: '/admin',
-  customer: '/customer',
-};
-
 export interface User {
   id: number;
   username: string;
