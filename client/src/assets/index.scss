@@ -1,5 +1,8 @@
+@use './customer-dashboard';
 @use 'bulma/sass' with (
-  $primary: #e11d48,
+  $primary: #6c0919,
+  $scheme-main: #f8eee7,
+  $text: #040303,
   $family-primary: '"Inter", system-ui, -apple-system, sans-serif'
 );
 
@@ -122,4 +125,24 @@ textarea {
 .table td,
 .table th {
   vertical-align: middle;
+}
+
+// SHE LIFTS brand palette (ported from the Tailwind project, no Tailwind dependency).
+:root {
+  --color-background: #f8eee7;
+  --color-primary: #6c0919;
+  --color-primary1: #00286e;
+  --color-base-text: #040303;
+  --color-form: #efe5df;
+  --color-form-border: #b2aba4;
+}
+
+html, body, #root {
+  background-color: var(--color-background);
+}
+
+// Keep Bulma controls consistent with the warm, light palette.
+html {
+  --bulma-body-background-color: var(--color-background);
+  --bulma-body-color: var(--color-base-text);
 }
