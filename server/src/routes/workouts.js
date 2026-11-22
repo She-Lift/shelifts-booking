@@ -18,6 +18,40 @@ export default function workouts(server, path) {
     }
   });
 
+  server.get(`${path}/:id`, async (request, response, next) => {
+    try {
+      const { id } = request.params;
+
+      if (
+        !/^[1-9]\d*$/.test(id) ||
+        id.length > 19 ||
+        BigInt(id) > 9223372036854775807n
+      ) {
+        return response.status(400).json({
+          message: "Invalid workout ID."
+        });
+      }
+
+      const result = await pool.query(
+        `SELECT *
+        FROM vw_workouts
+        WHERE id = $1`,
+        [id]
+      );
+
+      if (result.rowCount === 0) {
+        return response.status(404).json({
+          message: "Workout not found."
+        });
+      }
+
+      return response.status(200).json(result.rows[0]);
+
+    } catch (error) {
+      next(error);
+    }
+  });
+
   server.post(path, async (request, response, next) => {
     try {
       const {

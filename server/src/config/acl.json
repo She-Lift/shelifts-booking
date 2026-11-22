@@ -159,6 +159,14 @@
       ]
     },
     {
+      "method": "GET",
+      "path": "/api/workouts/:id",
+      "roles": [
+        "admin",
+        "customer"
+      ]
+    },
+    {
       "method": "POST",
       "path": "/api/workouts",
       "roles": [
