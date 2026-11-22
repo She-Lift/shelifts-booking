@@ -1,5 +1,5 @@
-import { useGlobalContext } from '@src/context/GlobalContext';
-import { ROLE_ROUTES } from '@src/utils/role-routes';
+import { useGlobalContext } from '@src/context/global-context';
+import { ROLE_ROUTES } from '@src/routes';
 import { Navigate } from 'react-router';
 
 export default function HomeRedirect() {

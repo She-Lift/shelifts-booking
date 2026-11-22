@@ -1,19 +1,19 @@
 import Button from '@src/components/generic/Button';
-import { useGlobalContext } from '@src/context/GlobalContext';
+import { useGlobalContext } from '@src/context/global-context';
+import { ROLE_ROUTES } from '@src/routes';
 import { AuthService } from '@src/services/auth-service';
 import { HttpError } from '@src/services/http-service';
-import { ROLE_ROUTES } from '@src/utils/role-routes';
 import { useActionState } from 'react';
-import { Navigate, useNavigate } from 'react-router';
+import { Navigate } from 'react-router';
 
 type LoginState = {
   error: string | undefined;
+  username: string;
 };
 
 export default function Login() {
-  const navigate = useNavigate();
   const { setUser, user } = useGlobalContext();
-  const [state, formAction, isPending] = useActionState(loginAction, { error: undefined });
+  const [state, formAction, isPending] = useActionState(loginAction, { error: undefined, username: '' });
 
   if (user) {
     return <Navigate to={ROLE_ROUTES[user.role]} replace />;
@@ -24,22 +24,19 @@ export default function Login() {
     const password = formData.get('password');
 
     if (typeof username !== 'string' || typeof password !== 'string') {
-      return { error: 'Ogiltiga inloggningsuppgifter.' };
+      return { error: 'Ogiltiga inloggningsuppgifter.', username: '' };
     }
 
     try {
       const loggedInUser = await AuthService.login({ username, password });
       setUser(loggedInUser);
-
-      navigate(ROLE_ROUTES[loggedInUser.role], { replace: true });
-
-      return { error: undefined };
+      return { error: undefined, username };
     } catch (err) {
       if (err instanceof HttpError) {
-        return { error: 'Felaktigt användarnamn eller lösenord.' };
+        return { error: 'Felaktigt användarnamn eller lösenord.', username };
       }
 
-      return { error: 'Kunde inte ansluta till servern.' };
+      return { error: 'Kunde inte ansluta till servern.', username };
     }
   }
 
@@ -54,21 +51,32 @@ export default function Login() {
             <label className="label" htmlFor="username">
               Användarnamn
             </label>
-            <input id="username" name="username" className="input" autoComplete="username" required />
+            <div className="control">
+              <input
+                id="username"
+                name="username"
+                className="input"
+                autoComplete="username"
+                defaultValue={state.username}
+                required
+              />
+            </div>
           </div>
 
           <div className="field">
             <label className="label" htmlFor="password">
               Lösenord
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              className="input"
-              autoComplete="current-password"
-              required
-            />
+            <div className="control">
+              <input
+                id="password"
+                name="password"
+                type="password"
+                className="input"
+                autoComplete="current-password"
+                required
+              />
+            </div>
           </div>
 
           {state.error && (
@@ -77,9 +85,13 @@ export default function Login() {
             </p>
           )}
 
-          <Button type="submit" className="is-primary is-fullwidth mt-5" isLoading={isPending}>
-            Logga in
-          </Button>
+          <div className="field mt-5">
+            <div className="control">
+              <Button type="submit" className="is-primary is-fullwidth" isLoading={isPending}>
+                Logga in
+              </Button>
+            </div>
+          </div>
         </form>
       </div>
     </section>

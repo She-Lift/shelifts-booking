@@ -7,7 +7,6 @@ import { router } from './router';
 import { HttpError, HttpStatus } from '@src/services/http-service';
 import { Toaster } from 'sonner';
 import './assets/index.scss';
-import GlobalProvider from './context/GlobalProvider';
 
 function globalErrorHandler(error: unknown, info?: ErrorInfo) {
   if (info?.componentStack) {
@@ -38,8 +37,6 @@ window.addEventListener('unhandledrejection', (event) => {
 createRoot(document.getElementById('root')!, { onUncaughtError: globalErrorHandler }).render(
   <StrictMode>
     <Toaster position="top-right" richColors />
-    <GlobalProvider>
-      <RouterProvider router={router} />
-    </GlobalProvider>
+    <RouterProvider router={router} />
   </StrictMode>,
 );
