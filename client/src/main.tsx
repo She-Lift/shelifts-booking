@@ -7,7 +7,7 @@ import { router } from './router';
 import { HttpError, HttpStatus } from '@src/services/http-service';
 import { Toaster } from 'sonner';
 import './assets/index.scss';
-import { GlobalProvider } from './context/GlobalProvider';
+import GlobalProvider from './context/GlobalProvider';
 
 function globalErrorHandler(error: unknown, info?: ErrorInfo) {
   if (info?.componentStack) {

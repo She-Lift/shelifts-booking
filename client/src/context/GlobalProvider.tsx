@@ -1,11 +1,20 @@
-import { AuthService, type User } from '@src/services/auth-service';
-import { HttpError } from '@src/services/http-service';
+import { type User } from '@src/services/auth-service';
 import { useEffect, useState, type ReactNode } from 'react';
 import { GlobalContext } from './GlobalContext';
 
-export function GlobalProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User>();
-  const [isLoading, setIsLoading] = useState(true);
+interface GlobalProviderProps {
+  initialUser?: User;
+  children: ReactNode;
+}
+
+export default function GlobalProvider({ initialUser, children }: GlobalProviderProps) {
+  const [user, setUser] = useState<User | undefined>(initialUser);
+  const [prevInitialUser, setPrevInitialUser] = useState<User | undefined>(initialUser);
+
+  if (initialUser !== prevInitialUser) {
+    setPrevInitialUser(initialUser);
+    setUser(initialUser);
+  }
 
   useEffect(() => {
     const handleUnauthorized = () => setUser(undefined);
@@ -13,25 +22,5 @@ export function GlobalProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
   }, []);
 
-  useEffect(() => {
-    async function checkSession() {
-      try {
-        const sessionUser = await AuthService.getSession();
-        setUser(sessionUser);
-      } catch (error) {
-        setUser(undefined);
-        if (error instanceof HttpError && error.status === 401) {
-          setUser(undefined);
-          return;
-        }
-        throw error;
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    checkSession();
-  }, []);
-
-  return <GlobalContext value={{ user, setUser, isLoading }}>{children}</GlobalContext>;
+  return <GlobalContext value={{ user, setUser }}>{children}</GlobalContext>;
 }

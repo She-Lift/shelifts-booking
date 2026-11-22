@@ -4,7 +4,6 @@ import { createContext, useContext, type Dispatch, type SetStateAction } from 'r
 export type GlobalContextType = {
   user: User | undefined;
   setUser: Dispatch<SetStateAction<User | undefined>>;
-  isLoading: boolean;
 };
 
 export const GlobalContext = createContext<GlobalContextType | undefined>(undefined);

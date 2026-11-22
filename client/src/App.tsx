@@ -1,23 +1,13 @@
 import Navbar from '@src/components/Navbar';
-import Spinner from '@src/components/Spinner';
-import { useGlobalContext } from '@src/context/GlobalContext';
-import { Outlet } from 'react-router';
+import GlobalProvider from '@src/context/GlobalProvider';
+import { type RootLoaderData } from '@src/loaders/root-loader';
+import { Outlet, useLoaderData } from 'react-router';
 
 export default function App() {
-  const { user, isLoading } = useGlobalContext();
-
-  if (isLoading && !user) {
-    return (
-      <main className="hero is-fullheight">
-        <div className="hero-body is-justify-content-center">
-          <Spinner label="Kontrollerar inloggning..." size="large" />
-        </div>
-      </main>
-    );
-  }
+  const { user } = useLoaderData<RootLoaderData>();
 
   return (
-    <>
+    <GlobalProvider initialUser={user}>
       {user && (
         <header>
           <Navbar />
@@ -27,6 +17,6 @@ export default function App() {
       <main className={`hero ${user ? 'is-fullheight-with-navbar' : 'is-fullheight'}`}>
         <Outlet />
       </main>
-    </>
+    </GlobalProvider>
   );
 }
