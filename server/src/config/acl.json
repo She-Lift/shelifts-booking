@@ -200,6 +200,13 @@
       "roles": [
         "customer"
       ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/bookings/:id",
+      "roles": [
+        "admin"
+      ]
     }
   ]
 }
