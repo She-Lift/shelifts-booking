@@ -1,22 +1,20 @@
-import { Navigate, Outlet } from "react-router";
-import { useGlobalContext, type User } from "../context/GlobalContext";
+import { ROLES, type User } from '@src/services/auth-service';
+import { Navigate, Outlet } from 'react-router';
+import { useGlobalContext } from '../context/GlobalContext';
 
 type Props = {
-  allowedRole: User["role"];
+  allowedRole: User['role'];
 };
 
 export default function ProtectedRoute({ allowedRole }: Props) {
   const { user } = useGlobalContext();
 
   if (!user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   if (user.role !== allowedRole) {
-    return <Navigate
-      to={user.role === "admin" ? "/admin" : "/customer"}
-      replace
-    />;
+    return <Navigate to={ROLES[user.role]} replace />;
   }
 
   return <Outlet />;
