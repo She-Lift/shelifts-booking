@@ -1,4 +1,3 @@
-import Navbar from '@src/components/Navbar';
 import GlobalProvider from '@src/context/GlobalProvider';
 import { type RootLoaderData } from '@src/loaders/root-loader';
 import { Outlet, useLoaderData } from 'react-router';
@@ -10,7 +9,7 @@ export default function App() {
     <GlobalProvider initialUser={user}>
       {user && (
         <header>
-          <Navbar />
+          {/* <Navbar /> */}
         </header>
       )}
 

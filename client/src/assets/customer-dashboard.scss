@@ -1,0 +1,213 @@
+// Customer mobile experience: explicitly light regardless of Bulma's automatic theme.
+.customer-dashboard {
+  --customer-pink: var(--color-primary);
+  --customer-dark: var(--color-base-text);
+  flex: 1 1 auto;
+  width: 100%;
+  padding: 0 1.15rem calc(7rem + env(safe-area-inset-bottom));
+  background: var(--color-background);
+  color: var(--customer-dark);
+  color-scheme: light;
+}
+.customer-dashboard__container { max-width: 720px !important; }
+.customer-dashboard .title,
+.customer-dashboard .subtitle,
+.customer-dashboard strong { color: var(--customer-dark); }
+.customer-dashboard .has-text-grey { color: #665c56 !important; }
+.customer-dashboard__topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  min-height: 94px; padding: .9rem .05rem 1.1rem;
+}
+.customer-dashboard__brand {
+  font-size: 1.68rem; font-weight: 900; letter-spacing: -.055em; color: var(--color-base-text);
+}
+.customer-dashboard__profile { color: var(--color-base-text); padding: .35rem; }
+.customer-dashboard__profile .material-symbols-outlined { font-size: 2rem; }
+.customer-dashboard__header { margin: .6rem 0 1.4rem; }
+.customer-dashboard__message { padding: 3rem 0; text-align: center; color: #665c56; }
+
+.customer-next-booking {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: .7rem; min-height: 165px;
+  padding: 1.45rem 1.25rem; margin-bottom: 1.25rem;
+  color: white; border-radius: 22px;
+  background: linear-gradient(125deg, #550713 0%, #6c0919 62%, #861d2c 100%);
+  box-shadow: 0 8px 22px rgb(108 9 25 / 12%);
+}
+.customer-next-booking__content { flex: 1; min-width: 0; }
+.customer-next-booking__eyebrow {
+  font-size: .76rem; letter-spacing: .055em; text-transform: uppercase;
+  font-weight: 800; opacity: .93; margin-bottom: .45rem;
+}
+.customer-next-booking h1 {
+  color: #fff; font-size: clamp(1.25rem, 5.2vw, 2.05rem);
+  line-height: 1.12; font-weight: 850; letter-spacing: -.035em;
+  margin-bottom: .9rem; overflow-wrap: anywhere;
+}
+.customer-next-booking__datetime {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .35rem;
+  color: white; font-weight: 600; font-size: .87rem;
+}
+.customer-next-booking__datetime .material-symbols-outlined { font-size: 1.15rem; }
+.customer-next-booking__separator { margin: 0 .12rem; }
+.customer-next-booking__symbol {
+  flex: 0 0 58px; width: 58px; height: 58px; display: grid; place-items: center;
+  border-radius: 18px; background: rgb(255 255 255 / 22%); color: #fff;
+}
+.customer-next-booking__symbol .material-symbols-outlined { font-size: 2.25rem; }
+
+.customer-card-summary {
+  display: flex; text-align: left; align-items: center; gap: .9rem;
+  width: 100%; border: 0; border-radius: 22px;
+  background: var(--color-form); padding: 1.25rem 1rem;
+  margin-bottom: 1.65rem; cursor: pointer;
+  color: var(--customer-dark);
+}
+.customer-card-summary__icon { flex: 0 0 36px; color: var(--color-primary); align-self: flex-start; }
+.customer-card-summary__icon .material-symbols-outlined { font-size: 1.9rem; }
+.customer-card-summary__body { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: .45rem; }
+.customer-card-summary__heading { font-weight: 850; font-size: 1.1rem; }
+.customer-card-summary__numbers { display: flex; justify-content: space-between; align-items: baseline; gap: .65rem; flex-wrap: wrap; }
+.customer-card-summary__numbers strong { font-size: .94rem; }
+.customer-card-summary__numbers strong:last-child { font-size: 1rem; }
+.customer-card-summary__progress { height: .46rem; overflow: hidden; border-radius: 999px; background: #dcd1ca; display: block; }
+.customer-card-summary__progress > span { display: block; height: 100%; border-radius: inherit; background: var(--customer-pink); }
+.customer-card-summary__note { color: #665c56; font-size: .73rem; }
+.customer-card-summary > .icon { flex: 0 0 auto; color: var(--customer-pink); }
+
+.customer-dashboard__section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; margin: 1.35rem 0 1rem; }
+.customer-dashboard__section-heading .title { font-size: 1.2rem; font-weight: 850; line-height: 1.25; }
+.customer-dashboard__section-description { color: #665c56; font-size: .8rem; margin-top: .22rem; }
+.customer-dashboard__text-action { display: inline-flex; align-items: center; gap: .15rem; border: 0; padding: .15rem 0; background: transparent; color: var(--color-primary); font-weight: 750; font-size: .8rem; white-space: nowrap; cursor: pointer; }
+.customer-dashboard__text-action .material-symbols-outlined { font-size: 1rem; }
+
+.customer-workout-row, .customer-booking-card, .customer-punch-card {
+  border: 1px solid var(--color-form-border); border-radius: 18px; background: #fffaf6;
+  margin-bottom: .75rem; padding: .95rem .85rem;
+  color: var(--customer-dark);
+}
+.customer-workout-row { display: flex; align-items: center; gap: .8rem; min-height: 104px; }
+.customer-workout-row__icon {
+  display: grid; place-items: center; flex: 0 0 52px; width: 52px; height: 52px;
+  background: var(--color-form); border-radius: 14px; color: var(--color-primary);
+}
+.customer-workout-row__icon .material-symbols-outlined { font-size: 1.7rem; }
+.customer-workout-row__info { min-width: 0; flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: .24rem; }
+.customer-workout-row__info strong { font-size: .95rem; line-height: 1.15; }
+.customer-workout-row__info > span { color: #665c56; font-size: .73rem; }
+.customer-workout-row__time { display: inline-flex; align-items: center; flex-wrap: wrap; gap: .12rem; }
+.customer-workout-row__time .material-symbols-outlined { font-size: .9rem; }
+.customer-workout-row__info > .customer-workout-row__available,
+.customer-workout-row__info > .customer-workout-row__full {
+  display: inline-flex; align-items: center; gap: .35rem; border-radius: 999px;
+  padding: .16rem .45rem; font-size: .72rem; font-weight: 750;
+}
+.customer-workout-row__info > .customer-workout-row__available { background: #e6f7eb; color: #146c35; }
+.customer-workout-row__info > .customer-workout-row__full { background: #fff0f0; color: #a52a2a; }
+.customer-workout-row__dot { background: currentColor; width: .42rem; height: .42rem; border-radius: 50%; }
+.customer-workout-row .button { flex: 0 0 auto; border-radius: 9px; font-weight: 750; min-height: 2.25rem; }
+.customer-booking-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.customer-booking-card p { color: #665c56; font-size: .84rem; margin-top: .2rem; }
+.customer-punch-card__number { font-size: 1.25rem; font-weight: 800; }
+.customer-dashboard .customer-punch-card .progress { accent-color: var(--customer-pink); }
+
+.customer-bottom-nav {
+  position: fixed; z-index: 40; bottom: 0; left: 0; right: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  padding: .55rem max(.5rem, env(safe-area-inset-left)) calc(.55rem + env(safe-area-inset-bottom)) max(.5rem, env(safe-area-inset-right));
+  background: var(--color-form); border-top: 1px solid var(--color-form-border);
+  box-shadow: 0 -4px 16px rgb(0 0 0 / 3%);
+}
+.customer-bottom-nav__item {
+  display: flex; align-items: center; justify-content: center; gap: .3rem;
+  flex-direction: column; padding: .28rem 0; border: none;
+  border-radius: 8px; background: transparent; color: #665c56;
+  font-size: .69rem; font-weight: 650; cursor: pointer;
+}
+.customer-bottom-nav__item .icon { font-size: 1.35rem; }
+.customer-bottom-nav__item.is-active { color: var(--customer-pink); }
+.customer-bottom-nav__item:focus-visible,
+.customer-card-summary:focus-visible,
+.customer-dashboard__text-action:focus-visible { outline: 2px solid var(--customer-pink); outline-offset: 2px; }
+@media (max-width: 370px) {
+  .customer-dashboard { padding-inline: .8rem; }
+  .customer-workout-row { gap: .55rem; padding-inline: .6rem; }
+  .customer-workout-row__icon { flex-basis: 42px; width: 42px; height: 46px; }
+  .customer-workout-row__time { font-size: .67rem !important; }
+  .customer-next-booking { padding-inline: 1rem; }
+  .customer-next-booking__symbol { flex-basis: 46px; width: 46px; height: 46px; }
+}
+@media (min-width: 800px) {
+  .customer-dashboard { padding-top: 0; padding-bottom: 7rem; }
+  .customer-bottom-nav { left: 50%; width: min(720px, 100%); transform: translateX(-50%); border-left: 1px solid var(--color-form-border); border-right: 1px solid var(--color-form-border); }
+}
+
+// Explicit component overrides for a consistent palette in Bulma light/dark auto themes.
+.customer-dashboard .button.is-primary {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+.customer-dashboard .button.is-primary:hover {
+  background-color: #550713;
+  border-color: #550713;
+}
+.customer-dashboard .button.is-primary.is-outlined {
+  background: transparent;
+  color: var(--color-primary);
+}
+.customer-dashboard .button.is-primary.is-outlined:hover {
+  background: var(--color-primary);
+  color: #fff;
+}
+.customer-dashboard .customer-punch-card .progress {
+  color: var(--color-primary);
+  background-color: #dcd1ca;
+}
+.customer-dashboard .customer-punch-card .progress::-webkit-progress-bar { background-color: #dcd1ca; }
+.customer-dashboard .customer-punch-card .progress::-webkit-progress-value { background-color: var(--color-primary); }
+.customer-dashboard .customer-punch-card .progress::-moz-progress-bar { background-color: var(--color-primary); }
+
+// Mobile refinements: iPhone SE (375px) and other compact screens.
+// Override Bulma's .section top padding to reclaim vertical space.
+.section.customer-dashboard {
+  padding-top: .4rem;
+  padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+}
+.customer-dashboard__topbar {
+  justify-content: center;
+  text-align: center;
+  min-height: 64px;
+  padding: .6rem 0 .65rem;
+}
+.customer-dashboard__header { margin: .25rem 0 .9rem; }
+.customer-next-booking {
+  min-height: 140px;
+  padding: 1.05rem 1rem;
+  margin-bottom: .85rem;
+}
+.customer-next-booking h1 { margin-bottom: .65rem; }
+.customer-next-booking__datetime { gap: .35rem .7rem; line-height: 1.35; }
+.customer-next-booking__date { display: inline-flex; align-items: center; gap: .3rem; white-space: nowrap; }
+.customer-next-booking__symbol { flex-basis: 48px; width: 48px; height: 48px; border-radius: 14px; }
+.customer-card-summary { padding: 1rem .9rem; margin-bottom: 1.05rem; }
+.customer-dashboard__section-heading { align-items: center; margin: .9rem 0 .75rem; }
+.customer-workout-row { gap: .6rem; min-height: 90px; padding: .7rem .7rem; }
+.customer-workout-row__icon { flex-basis: 44px; width: 44px; height: 46px; border-radius: 12px; }
+.customer-workout-row__icon .material-symbols-outlined { font-size: 1.45rem; }
+.customer-workout-row__info { gap: .28rem; }
+.customer-workout-row__time { display: block; font-size: .73rem; line-height: 1.25; }
+.customer-workout-row .button { min-width: 49px; padding-inline: .6rem; }
+.customer-dashboard .customer-punch-card .progress,
+.customer-dashboard .customer-punch-card .progress::-webkit-progress-bar { background-color: #e3d9d3; }
+
+@media (max-width: 400px) {
+  .section.customer-dashboard { padding-inline: .9rem; }
+  .customer-next-booking__datetime { font-size: .79rem; }
+  .customer-next-booking__symbol { flex-basis: 42px; width: 42px; height: 44px; }
+  .customer-workout-row__icon { flex-basis: 42px; width: 42px; height: 44px; }
+  .customer-workout-row__info strong { font-size: .89rem; }
+  .customer-workout-row__time { font-size: .7rem; }
+  .customer-dashboard__section-heading .title { font-size: 1.15rem; }
+  .customer-dashboard__text-action { font-size: .77rem; }
+}
