@@ -8,38 +8,19 @@ import NotFound from './pages/NotFound';
 
 export const router = createBrowserRouter([
   {
-    path: '/',
-    element: <Navigate to="/login" replace />,
-  },
-  {
-    path: '/login',
-    Component: Login,
-  },
-  {
     Component: App,
     children: [
+      { path: '/', element: <Navigate to="/login" replace /> },
+      { path: '/login', Component: Login },
       {
         element: <ProtectedRoute allowedRole="admin" />,
-        children: [
-          {
-            path: 'admin',
-            Component: Admin,
-          },
-        ],
+        children: [{ path: 'admin', Component: Admin }],
       },
       {
         element: <ProtectedRoute allowedRole="customer" />,
-        children: [
-          {
-            path: 'customer',
-            Component: Customer,
-          },
-        ],
+        children: [{ path: 'customer', Component: Customer }],
       },
+      { path: '*', Component: NotFound },
     ],
-  },
-  {
-    path: '*',
-    Component: NotFound,
   },
 ]);
