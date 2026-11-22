@@ -18,6 +18,31 @@ body,
   width: 100%;
 }
 
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal.is-active .modal-background,
+.modal.is-active .modal-card {
+  animation: modal-in 0.2s ease-out;
+}
+
+.modal-card-body:last-child {
+  border-bottom-left-radius: var(--bulma-modal-card-head-radius, 0.75rem);
+  border-bottom-right-radius: var(--bulma-modal-card-head-radius, 0.75rem);
+}
+
+.is-clickable {
+  -webkit-tap-highlight-color: transparent;
+}
+
 [data-theme='dark'] .box,
 [data-theme='dark'] .card {
   background-color: var(--bulma-scheme-main-bis);
