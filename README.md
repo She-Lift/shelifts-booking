@@ -6,15 +6,15 @@ Ett webbaserat, mobile-first bokningssystem för SHE LIFTS. Systemet gör det m�
 
 ## Tech Stack
 
-| Del | Teknik |
-|---|---|
-| Frontend | React, TypeScript, React Router, Bulma, Vite |
-| Backend | Node.js, Express.js |
-| Authentication | express-session, PostgreSQL session store |
-| Authorization | JSON-baserad ACL-middleware |
-| Database | PostgreSQL 17 |
-| Development | Docker Compose |
-| CI | GitHub Actions, Gitleaks, npm audit |
+| Del            | Teknik                                       |
+| -------------- | -------------------------------------------- |
+| Frontend       | React, TypeScript, React Router, Bulma, Vite |
+| Backend        | Node.js, Express.js                          |
+| Authentication | express-session, PostgreSQL session store    |
+| Authorization  | JSON-baserad ACL-middleware                  |
+| Database       | PostgreSQL 17                                |
+| Development    | Docker Compose                               |
+| CI             | GitHub Actions, Gitleaks, npm audit          |
 
 ## Project Structure
 
@@ -29,10 +29,8 @@ shelifts-booking/
 │   │   ├── middleware/
 │   │   ├── routes/
 │   │   └── utils/
+|   ├── database/       # Database schema and seed data
 │   └── public/         # Built React application
-├── database/
-│   ├── init/           # Database schema and seed data
-│   └── compose.yaml
 └── README.md
 ```
 
